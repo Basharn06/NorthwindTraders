@@ -8,7 +8,6 @@ import java.sql.Statement;
 public class App {
     public static void main(String[] args) {
 
-        // check for args
         if (args.length < 2) {
             System.out.println("Application needs two args to run: A username and a password for the db");
             System.exit(1);
@@ -20,25 +19,26 @@ public class App {
         String url = "jdbc:mysql://localhost:3306/northwind";
 
         try {
-            // load MySQL driver
             Class.forName("com.mysql.cj.jdbc.Driver");
-
-            // open connection
             Connection connection = DriverManager.getConnection(url, username, password);
 
-            // create statement
             Statement statement = connection.createStatement();
 
-            // run query
-            String query = "SELECT ProductName FROM products";
+            String query = "SELECT ProductID, ProductName, UnitPrice, UnitsInStock FROM products";
             ResultSet results = statement.executeQuery(query);
 
-            // print results
+            System.out.println("Id   Name                      Price     Stock");
+            System.out.println("-----------------------------------------------");
+
             while (results.next()) {
-                System.out.println(results.getString("ProductName"));
+                int id = results.getInt("ProductID");
+                String name = results.getString("ProductName");
+                double price = results.getDouble("UnitPrice");
+                int stock = results.getInt("UnitsInStock");
+
+                System.out.printf("%-4d %-25s %-9.2f %d\n", id, name, price, stock);
             }
 
-            // close connection
             connection.close();
 
         } catch (Exception e) {
